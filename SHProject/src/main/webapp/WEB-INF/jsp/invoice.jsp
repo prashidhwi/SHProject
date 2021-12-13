@@ -116,6 +116,7 @@ $(document).ready(function(){
 				var rowCount = $('#invoiceTable tr').length-1;
 				var row = "<tr class='invoiceItems' id='invoiceItem"+rowCount+"'>";
 				row += "<td id='"+rowCount+"'>" + rowCount + "</td>";
+				row += "<td id='verifiedCol"+rowCount+"' align='center'><input type='checkbox' id='verified" + rowCount + "' /></td>";
 				row +="<td id='itemName"+rowCount+"'>"+ $('#itemName').val() +"</td>";
 				row +="<td id='details"+rowCount+"'>"+ $('#details').val() +"</td>";
 				row +="<td id='qty"+rowCount+"'>"+ $('#qty').val() + "</td>";
@@ -175,40 +176,51 @@ $(document).ready(function(){
 	  	$("#finalTotal").html(finalTotal.toFixed(2));
 		$("#invoiceItem"+rowNumber).remove();
 	  	var count = 1;
-	  	$("tr[id^='invoiceItem']").each(function(){
-	  		$(this).attr("id","invoiceItem"+count);
-			$(this).find("td:eq(0)").html(count);
-			$(this).find("td:eq(0)").attr("id",count);
-			$(this).find("td:eq(1)").attr("id","itemName"+count);
-			$(this).find("td:eq(2)").attr("id","details"+count);
-			$(this).find("td:eq(3)").attr("id","qty"+count);
-			$(this).find("td:eq(4)").attr("id","amount"+count);
-			$(this).find("td:eq(5)").attr("id","itemTotal"+count);
-			$(this).find("td:eq(6)").attr("id","remove"+count);
-			$($(this).find("td:eq(6)")).find("img:eq(0)").attr("id","removeItem"+count);
-			count++;
-		});
+	  	if($('#invoiceTable tr').length-2>0){
+		  	$("tr[id^='invoiceItem']").each(function(){
+		  		var index = 0;
+		  		$(this).attr("id","invoiceItem"+count);
+				$(this).find("td:eq("+index+")").html(count);
+				$(this).find("td:eq("+index+")").attr("id",count);
+				$(this).find("td:eq("+(++index)+")").attr("id","itemName"+count);
+				$(this).find("td:eq("+(++index)+")").attr("id","verifiedCol"+count);
+				$($(this).find("td:eq("+(index)+")")).find("input:eq(0)").attr("id","verified"+count);
+				$(this).find("td:eq("+(++index)+")").attr("id","details"+count);
+				$(this).find("td:eq("+(++index)+")").attr("id","qty"+count);
+				$(this).find("td:eq("+(++index)+")").attr("id","amount"+count);
+				$(this).find("td:eq("+(++index)+")").attr("id","itemTotal"+count);
+				$(this).find("td:eq("+(++index)+")").attr("id","remove"+count);
+				$($(this).find("td:eq("+(index)+")")).find("img:eq(0)").attr("id","removeItem"+count);
+				count++;
+			});
+	  	}
 	}	
 	
 	$( "img[id^='removeItem']" ).click(function(){
-		alert("direct event");
 		var rowNumber = parseInt($(this).attr("id").replace("removeItem",""));
 		var finalTotal = parseFloat($("#finalTotal").html()) - parseFloat($('#itemTotal'+rowNumber).html());
 	  	$("#finalTotal").html(finalTotal.toFixed(2));
 		$("#invoiceItem"+rowNumber).remove();
 	  	var count = 1;
-	  	$("tr[id^='invoiceItem']").each(function(){
-			$(this).find("td:eq(0)").html(count);
-			$(this).find("td:eq(0)").attr("id",count);
-			$(this).find("td:eq(1)").attr("id","itemName"+count);
-			$(this).find("td:eq(2)").attr("id","details"+count);
-			$(this).find("td:eq(3)").attr("id","qty"+count);
-			$(this).find("td:eq(4)").attr("id","amount"+count);
-			$(this).find("td:eq(5)").attr("id","itemTotal"+count);
-			$(this).find("td:eq(6)").attr("id","remove"+count);
-			$($(this).find("td:eq(6)")).find("img:eq(0)").attr("id","removeItem"+count);
-			count++;
-		});
+	  	if($('#invoiceTable tr').length-2>0){
+		  	$("tr[id^='invoiceItem']").each(function(){
+		  		
+		  		var index = 0;
+		  		$(this).attr("id","invoiceItem"+count);
+				$(this).find("td:eq("+index+")").html(count);
+				$(this).find("td:eq("+index+")").attr("id",count);
+				$(this).find("td:eq("+(++index)+")").attr("id","verifiedCol"+count);
+				$($(this).find("td:eq("+(index)+")")).find("input:eq(0)").attr("id","verified"+count);
+				$(this).find("td:eq("+(++index)+")").attr("id","itemName"+count);
+				$(this).find("td:eq("+(++index)+")").attr("id","details"+count);
+				$(this).find("td:eq("+(++index)+")").attr("id","qty"+count);
+				$(this).find("td:eq("+(++index)+")").attr("id","amount"+count);
+				$(this).find("td:eq("+(++index)+")").attr("id","itemTotal"+count);
+				$(this).find("td:eq("+(++index)+")").attr("id","remove"+count);
+				$($(this).find("td:eq("+(index)+")")).find("img:eq(0)").attr("id","removeItem"+count);
+				count++;
+			});
+	  	}
 	});
 	
 	$("#saveInvocie").click(function(){
@@ -242,6 +254,7 @@ $(document).ready(function(){
 // 		var invoice = new Object();
 // 		console.log(JSON.stringify(invoice));
 		var invoiceDetailList	= new Array();
+		var isAllVerified = true;
 		for(var i=1;i<=$('#invoiceTable tr').length-2;i++){
 			var invoiceDetails = {
 					invoiceNo: 0,
@@ -250,7 +263,8 @@ $(document).ready(function(){
 					details: "",
 					qty: 0,
 					amount: 0.0,
-					total: 0.0
+					total: 0.0,
+					verified: false
 			};
 // 			var invoicedtl = new Object(invoiceDetails);
 			if($("#itemName"+i).html()!=null && $("#itemName"+i).html()!=''){
@@ -261,7 +275,16 @@ $(document).ready(function(){
 				invoiceDetails.qty = $("#qty"+i).html()
 				invoiceDetails.amount = $("#amount"+i).html();
 				invoiceDetails.total = $("#itemTotal"+i).html();
+				invoiceDetails.isVerified = $("#verified"+i).is(":checked");
 				invoiceDetailList.push(invoiceDetails);
+				if(!$("#verified"+i).is(":checked")){
+					isAllVerified = false;
+				}
+			}
+		}
+		if(!isAllVerified) {
+			if(!confirm("All Items are not verified. Do you still want to save?")){
+				return;
 			}
 		}
 		invoice.invoiceNo = $("#invoiceNo").html();
@@ -293,11 +316,6 @@ $(document).ready(function(){
 						location="<%=context%>/invoice/edit.do?invoiceNo="+$('#invoiceNo').html();
 					}
 
-// 	            	if($("#editFlag").val()!=null){
-<%-- 	          			location="<%=context%>/invoice/view.do"; --%>
-// 	          		} else {
-// 		            	location.reload();
-// 	          		}
 	            }
            	}
 			
@@ -417,7 +435,10 @@ $(document).ready(function(){
 												class="table table-bordered">
 												<tr id="titleRow">
 													<th width="5%">No</th>
-													<th width="30%">Item Name</th>
+													<c:if test="${!invoice.paid}">
+													<th width="3%"></th>
+													</c:if>
+													<th width="27%">Item Name</th>
 													<th width="15%">Details</th>
 													<th width="15%">Qty</th>
 													<th width="15%">Price/Unit</th>
@@ -430,6 +451,9 @@ $(document).ready(function(){
 														<tr class='invoiceItems'
 															id='invoiceItem${invoiceDetails.itemNo }'>
 															<td id="${invoiceDetails.itemNo }">${invoiceDetails.itemNo }</td>
+															<c:if test="${!invoice.paid}">
+															<td id="verifiedCol${invoiceDetails.itemNo }"><input type="checkbox" id="verified${invoiceDetails.itemNo }" ${invoiceDetails.verified?'checked':'' } /></td>
+															</c:if>
 															<td id="itemName${invoiceDetails.itemNo }">${invoiceDetails.itemName }</td>
 															<td id="details${invoiceDetails.itemNo }">${invoiceDetails.details }</td>
 															<td id="qty${invoiceDetails.itemNo }">${invoiceDetails.qty }</td>
@@ -441,7 +465,7 @@ $(document).ready(function(){
 													</c:forEach>
 												</c:if>
 												<tr id="totalRow">
-													<td width="80%" colspan="5" style="text-align: right;"><strong>Grand
+													<td width="80%" colspan="6" style="text-align: right;"><strong>Grand
 															Total</strong></td>
 													<td width="19%" style="text-align: right;" id="finalTotal">${not empty invoice.grandTotal?invoice.grandTotal:'0.00' }</td>
 													<td width="1%">&nbsp;</td>

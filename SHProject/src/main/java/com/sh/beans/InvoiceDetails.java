@@ -18,6 +18,7 @@ public class InvoiceDetails implements Serializable {
 	private int qty;
 	private float amount;
 	private float total;
+	private boolean isVerified;
 	/**
 	 * @return the invoiceNo
 	 */
@@ -101,6 +102,18 @@ public class InvoiceDetails implements Serializable {
 	 */
 	public void setDetails(String details) {
 		this.details = details;
+	}
+	/**
+	 * @return the isVerified
+	 */
+	public boolean isVerified() {
+		return isVerified;
+	}
+	/**
+	 * @param isVerified the isVerified to set
+	 */
+	public void setVerified(boolean isVerified) {
+		this.isVerified = isVerified;
 	}
 
 }

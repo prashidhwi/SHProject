@@ -21,12 +21,12 @@ public class InvoiceDao extends BaseJdbcDaoSupport {
 	}
 
 	public int[] insertInvoiceDetails(List<InvoiceDetails> invoiceDetails) {
-		String sql = "insert into invoice_details (invoice_no,item_no,item_name,details,qty,amount,total) values (?,?,?,?,?,?,?)";
+		String sql = "insert into invoice_details (invoice_no,item_no,item_name,details,qty,amount,total,verified) values (?,?,?,?,?,?,?,?)";
 		List<Object[]> params = new ArrayList<Object[]>();
 		for (InvoiceDetails invoiceDetail : invoiceDetails) {
 			Object[] param = { invoiceDetail.getInvoiceNo(), invoiceDetail.getItemNo(), invoiceDetail.getItemName(),
 					invoiceDetail.getDetails(), invoiceDetail.getQty(), invoiceDetail.getAmount(),
-					invoiceDetail.getTotal() };
+					invoiceDetail.getTotal(), invoiceDetail.isVerified() };
 			params.add(param);
 		}
 		return getJdbcTemplate().batchUpdate(sql, params);
@@ -52,7 +52,7 @@ public class InvoiceDao extends BaseJdbcDaoSupport {
 	}
 
 	public List<InvoiceDetails> getInvoiceDetailsByInvoiceNo(int invoiceNo) {
-		String sql = "select invoice_no as invoiceNo,item_no as itemNo,item_name as itemName,details,qty,amount,total from invoice_details where invoice_no=? and status>0 order by item_no";
+		String sql = "select invoice_no as invoiceNo,item_no as itemNo,item_name as itemName,details,qty,amount,total,verified from invoice_details where invoice_no=? and status>0 order by item_no";
 		return getJdbcTemplate().query(sql, new Object[] { invoiceNo },
 				new BeanPropertyRowMapper<InvoiceDetails>(InvoiceDetails.class));
 	}
