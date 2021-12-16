@@ -35,8 +35,8 @@
 			autoFocus: true,
 			select: function(event,ui){
 //	 			$("input[id^='item']").val("test");
-				$("#supplierName").html(ui.item.label + " - " + ui.item.value);
-				$("#supplierCity").val(ui.item.value);
+				$("#supplierCity").val(ui.item.label.split(" | ")[1]);
+				ui.item.value=ui.item.label.split(" | ")[0];
 				
 				$("#billId").focus();
 			}

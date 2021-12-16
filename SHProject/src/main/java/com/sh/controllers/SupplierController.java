@@ -53,8 +53,8 @@ public class SupplierController {
 		if(list != null){
 			for (Supplier supplier : list) {
 				AutoComplete autoComplete = new AutoComplete();
-				autoComplete.setLabel(supplier.getSupplierName());
-				autoComplete.setValue(supplier.getSupplierCity());
+				autoComplete.setLabel(supplier.getSupplierName() + " | " + supplier.getSupplierCity());
+				autoComplete.setValue(supplier.getSupplierName());
 				customers.add(autoComplete);
 			}
 		}

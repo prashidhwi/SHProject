@@ -161,6 +161,7 @@ $(document).ready(function(){
 	}
 	
 	$( "tr[id^='invoiceItem']" ).click(function(){
+		alert($($(this).child()).attr("id"));
 		var itemNumber = $('#'+$($(this).first()).attr("id")+' td:first-child').attr('id');
 		$("#invoiceItem"+itemNumber).attr("style","background-color:#CCC;");
 		$("#itemName").val($("#itemName"+itemNumber).html().trim());
@@ -465,7 +466,7 @@ $(document).ready(function(){
 													</c:forEach>
 												</c:if>
 												<tr id="totalRow">
-													<td width="80%" colspan="6" style="text-align: right;"><strong>Grand
+													<td width="80%" colspan="${invoice.paid?'5':'6'}" style="text-align: right;"><strong>Grand
 															Total</strong></td>
 													<td width="19%" style="text-align: right;" id="finalTotal">${not empty invoice.grandTotal?invoice.grandTotal:'0.00' }</td>
 													<td width="1%">&nbsp;</td>
