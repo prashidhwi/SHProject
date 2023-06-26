@@ -66,7 +66,7 @@ thead.report-header {
 			</tr>
 			<tr>
 				<td colspan="3" width="60%">To:<br>${invoice.customer },&nbsp;${invoice.city }</td>
-				<td colspan="2">Date:&nbsp;${invoice.invDate }<br>No. :&nbsp;${invoice.invoiceNo }</td>
+				<td colspan="2" style="float: right;">Date:&nbsp;${invoice.invDate }<br>No. :&nbsp;${invoice.invoiceNo }</td>
 			</tr>
 			<!-- <tr>
 				<td colspan="3">&nbsp;</td>

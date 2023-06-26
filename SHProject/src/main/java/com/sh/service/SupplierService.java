@@ -37,7 +37,7 @@ public class SupplierService {
 		List<Supplier> supplierList = supplierDao.getBillsBySupplier(supplierBean);
 		if(null != supplierList){
 			for(Supplier supplier: supplierList){
-				DateFormat dateFormat = new SimpleDateFormat("dd/MM/YYYY");
+				DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 				supplier.setBillDate(dateFormat.format(new Date(supplier.getInvDate().getTime())));
 			}
 		}
@@ -48,7 +48,7 @@ public class SupplierService {
 		List<SupplierPayment> supplierPaymentList = supplierDao.getSupplierPaymentDetails(supplierBean.getSupplierName(), supplierBean.getSupplierCity());
 		if(null != supplierPaymentList){
 			for(SupplierPayment supplierPayment: supplierPaymentList){
-				DateFormat dateFormat = new SimpleDateFormat("dd/MM/YYYY");
+				DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 				supplierPayment.setPaymentDate(dateFormat.format(new Date(supplierPayment.getPayDate().getTime())));
 			}
 		}

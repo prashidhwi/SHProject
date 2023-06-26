@@ -62,6 +62,36 @@ function verifyPayment(paymentId){
 		
 	});
 }
+
+function updatePaymentStatus(invoiceNo,isPaid,event){
+	var invoice = {
+			invoiceNo: 0,
+			customer: "",
+			city: "",
+			invDate: "",
+			invoiceDate: null,
+			grandTotal: 0.0,
+			discount: 0,
+			isPaid: false,
+			receiptId: "",
+			note: "",
+			editFlag:"",
+	};
+	invoice.invoiceNo = invoiceNo;
+	invoice.isPaid = isPaid;
+	
+	$.ajax({
+		url:"<%=context%>/invoice/paid.do",
+		method:'post',
+		dataType: 'json',
+		contentType: 'application/json',
+        data: JSON.stringify(invoice),
+        success: function(data) {
+        	alert(data);
+       	}
+		
+	});
+}
 	$(document).ready(function(){
 		var invoiceTable = $("#invoiceTable").DataTable({
 			"columnDefs": [
@@ -162,7 +192,7 @@ function verifyPayment(paymentId){
 		        		invoiceTable.row.add([
 		        			value.invoiceNo,
 		        			parseFloat(value.grandTotal).toFixed(2),
-		        			"<input type='checkbox' id='isPaid' " + (value.isPaid?'checked':'') + " onchange='updatePaymentStatus("+ value.invoiceNo +",this.checked,event)' disabled />",
+		        			"<input type='checkbox' id='isPaid' " + (value.isPaid?'checked':'') + " onchange='updatePaymentStatus("+ value.invoiceNo +",this.checked,event)' " + (value.isPaid?'disabled':'') + " />",
 		        			value.invDate
 		        		]).draw();
 		        	});
@@ -244,7 +274,7 @@ function verifyPayment(paymentId){
 				alert("Please enter Customer.");
 				return;
 			}
-			location='<%=context%>/customer/collectpayment.do?customer=' + $("#customer").val() + '&city='+$("#city").val();
+			location=encodeURI('<%=context%>/customer/collectpayment.do?customer=' + $("#customer").val() + '&city='+$("#city").val());
 		});
 		
 		<%-- $("#payDate").datepicker({
@@ -349,7 +379,7 @@ function verifyPayment(paymentId){
 							</div>
 							<!-- 				</div> -->
 							<!-- 				<div class="col-xs-12 col-sm-6"> -->
-							<div class="box" style="width: 52%; margin-left: 10px;">
+							<div class="box" style="width: 54%; margin-left: 10px;">
 								<div class="title">Payment Details</div>
 								<div class="table-responsive">
 									<table class="table table-bordered" id="paymentTable">

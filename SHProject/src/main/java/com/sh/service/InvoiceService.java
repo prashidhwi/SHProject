@@ -85,7 +85,7 @@ public class InvoiceService {
 	public Invoice getInvoice(int invoiceNo) {
 		Invoice invoice = invoiceDao.getInvoiceByInvoiceNo(invoiceNo);
 		if(invoice != null){
-			DateFormat dateFormat = new SimpleDateFormat("dd/MM/YYYY");
+			DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 			invoice.setInvDate(dateFormat.format(new Date(invoice.getInvoiceDate().getTime())));
 			invoice.setInvoiceDetails(invoiceDao.getInvoiceDetailsByInvoiceNo(invoiceNo));
 		}

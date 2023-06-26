@@ -39,6 +39,7 @@
 				ui.item.value=ui.item.label.split(" | ")[0];
 				
 				$("#billId").focus();
+				$("#billId").select();
 			}
 		});
 	});
@@ -76,6 +77,10 @@
 				       		<div class="form-group">
 				       		<label for="billDate">Bill Date:</label>
 				       		<form:input path="billDate" id="billDate" class="form-control" validations="notNull:true"/>
+				       		</div>
+				       		<div class="form-group">
+				       		<label for="note">Note:</label>
+				       		<form:textarea path="note" cssClass="form-control" id="note" cols="40"/>
 				       		</div>
 				       		<div class="form-group">
 				       			<input type="submit" value="Save" class="sub-btn" />

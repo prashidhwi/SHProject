@@ -161,7 +161,6 @@ $(document).ready(function(){
 	}
 	
 	$( "tr[id^='invoiceItem']" ).click(function(){
-		alert($($(this).child()).attr("id"));
 		var itemNumber = $('#'+$($(this).first()).attr("id")+' td:first-child').attr('id');
 		$("#invoiceItem"+itemNumber).attr("style","background-color:#CCC;");
 		$("#itemName").val($("#itemName"+itemNumber).html().trim());

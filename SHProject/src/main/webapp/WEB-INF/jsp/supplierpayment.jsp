@@ -35,15 +35,15 @@
 			autoFocus: true,
 			select: function(event,ui){
 //	 			$("input[id^='item']").val("test");
-				$("#supplier").html(ui.item.label + " - " + ui.item.value);
-				$("#supplierCity").val(ui.item.value);
+				$("#supplier").html(ui.item.label.replace(" | "," - "));
+				$("#supplierCity").val(ui.item.label.split(" | ")[1]);
 				var supplier = {
 						supplierId: 0,
-						supplierName: ui.item.label,
-						supplierCity: ui.item.value,
+						supplierName: ui.item.value,
+						supplierCity: ui.item.label.split(" | ")[1],
 						billDate: "",
 				};
-				ui.item.value=ui.item.label;
+				ui.item.value=ui.item.label.split(" | ")[0];
 				$("#supplierTable").find("tr:gt(0)").remove();
 				$.ajax({
 					url:"<%=context%>/supplier/getbills.do",
@@ -60,8 +60,11 @@
 			        		console.log("Payment Status: "+value.isPaid);
 			        		row += "<td align='center'><input type='checkbox' id='status' " + (value.isPaid?'checked':'') + " onchange='updatePaymentStatus("+ value.billId +",this.checked,event)' /></td>";
 			        		row += "<td>" + value.billDate + "</td>";
+			        		row += "<td>" + (value.note!=null && value.note != undefined ? value.note:'') + "</td>";
 			        		row +="</tr>"
-			        		grandTotal += parseFloat(value.amount);
+			        		if(!value.isPaid){
+				        		grandTotal += parseFloat(value.amount);
+			        		}
 			        		$("#supplierTable").append(row);
 			        	});
 			        	
@@ -73,6 +76,8 @@
 			        	totalRow += "</tr>";
 			        	$("#supplierTable").append(totalRow);
 			        	
+			        	$("#paymentTable tbody tr").remove();
+			        	var paymentTotal = 0;
 			        	$.each(data.supplierPaymentList, function( index, value ) {
 			        		var row = "<tr>"
 			        		row += "<td>" + value.supplierPaymentId + "</td>";
@@ -81,9 +86,19 @@
 			        		row += "<td>" + value.paymentDate + "</td>";
 			        		row += "<td>" + value.note + "</td>";
 			        		row +="</tr>"
-// 			        		grandTotal += parseFloat(value.amount);
+			        		paymentTotal += parseFloat(value.amount);
 			        		$("#paymentTable").append(row);
 			        	});
+			        	
+			        	var paymentTotalRow = "<tr>";
+			        	paymentTotalRow += "<td>&nbsp;</td>";
+			        	paymentTotalRow += "<td id='grandTotal' style='text-align: right;'><strong>"+parseFloat(paymentTotal).toFixed(2)+"</strong></td>";
+			        	paymentTotalRow += "<td>&nbsp;</td>";
+			        	paymentTotalRow += "<td>&nbsp;</td>";
+			        	paymentTotalRow += "</tr>";
+			        	$("#paymentTable").append(paymentTotalRow);
+			        	$("#totalPendingAmount").html("Total Pending Payemnt: "+ (parseFloat(grandTotal)-parseFloat(paymentTotal)).toFixed(2));
+			        	$("#pendingPaymentBox").show();
 		           	}
 					
 				});
@@ -148,9 +163,15 @@
 								<th style="text-align: right;">Amount</th>
 								<th style="text-align: center;">Paid/Unpaid</th>
 								<th>Bill Date</th>
+								<th>Note</th>
 							</tr>
 						</table>
 						</div>
+					</div>
+				</div>
+				<div class="col-xs-12" >
+					<div class="box" style="display: none;" id="pendingPaymentBox">
+					<div id="totalPendingAmount" style="text-align: center; font-size: 14pt; font-weight: bold;"></div>
 					</div>
 				</div>
 				<div class="col-xs-12 col-sm-6">

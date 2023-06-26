@@ -26,6 +26,7 @@ public class Supplier implements Serializable {
 	private Date invDate;
 	private boolean isPaid;
 	private boolean status;
+	private String note;
 	private String inputDate;
 	private String inputUser;
 	private String updateDate;
@@ -185,6 +186,18 @@ public class Supplier implements Serializable {
 	 */
 	public void setPaid(boolean isPaid) {
 		this.isPaid = isPaid;
+	}
+	/**
+	 * @return the note
+	 */
+	public String getNote() {
+		return note;
+	}
+	/**
+	 * @param note the note to set
+	 */
+	public void setNote(String note) {
+		this.note = note;
 	}
 
 }
