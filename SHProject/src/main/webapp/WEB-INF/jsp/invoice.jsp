@@ -182,9 +182,9 @@ $(document).ready(function(){
 		  		$(this).attr("id","invoiceItem"+count);
 				$(this).find("td:eq("+index+")").html(count);
 				$(this).find("td:eq("+index+")").attr("id",count);
-				$(this).find("td:eq("+(++index)+")").attr("id","itemName"+count);
 				$(this).find("td:eq("+(++index)+")").attr("id","verifiedCol"+count);
 				$($(this).find("td:eq("+(index)+")")).find("input:eq(0)").attr("id","verified"+count);
+				$(this).find("td:eq("+(++index)+")").attr("id","itemName"+count);
 				$(this).find("td:eq("+(++index)+")").attr("id","details"+count);
 				$(this).find("td:eq("+(++index)+")").attr("id","qty"+count);
 				$(this).find("td:eq("+(++index)+")").attr("id","amount"+count);
