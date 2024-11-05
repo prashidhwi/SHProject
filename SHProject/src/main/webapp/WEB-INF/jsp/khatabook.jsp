@@ -123,7 +123,7 @@ function updatePaymentStatus(invoiceNo,isPaid,event){
 			"columnDefs": [
 				{
 					"targets":0,
-					"width":"15%"
+					"width":"10%"
 				},
 				{
 					"targets":1,
@@ -136,11 +136,16 @@ function updatePaymentStatus(invoiceNo,isPaid,event){
 				},
 				{
 					"targets":3,
-					"className": "center-align"
+					"className": "center-align",
+					"width":"5%"
 				},
 				{
 					"targets":4,
 					"width":"40%"
+				},
+				{
+					"targets":5,
+					"orderable":false
 				}
 			],
 			"responsive": true,
@@ -219,6 +224,7 @@ function updatePaymentStatus(invoiceNo,isPaid,event){
 		        		row += "<td>"+parseFloat(value.amount).toFixed(2)+"</td>";
 		        		row += "<td data-sort='" + value.paymentDate + "'>" + value.payDate + "</td>";
 		        		row += "<td>" + value.reference + "</td>"
+		        		row += "<td><img alt='Delete' src='<%=context%>/images/icn_remove.png' width='24px' /></td>"
 		        		row +="</tr>"
 // 		        		$("#paymentTable  tbody").append(row);
 		        		paymentTotal += parseFloat(value.amount);
@@ -229,7 +235,8 @@ function updatePaymentStatus(invoiceNo,isPaid,event){
 		        			parseFloat(value.amount).toFixed(2),
 		        			value.payDate,
 		        			"<input type='checkbox' id='verified"+value.paymentId+"' "+(value.isVerified?'checked':'')+" onclick='verifyPayment("+value.paymentId+")' />",
-		        			value.reference
+		        			value.reference,
+		        			(!value.isVerified?'<a href="#" onclick="deletePayment('+value.paymentId+')"><img alt="Delete" src="<%=context%>/images/icn_remove.png" width="24px" /></a>':'&nbsp;')
 		        		]).draw( false );
 		        		
 		        	});
@@ -294,11 +301,13 @@ function updatePaymentStatus(invoiceNo,isPaid,event){
 			}
 		});
 		
-		
+		if($("#customer").val()!=""){
+			$("#search").trigger("click");
+		}
 	});
 	function printAccount(){
 		$.ajax({
-			url:"<%=context%>/customer/printaccount.do?customer=" + $('#customer').val()+"&city="+$('#city').val(),
+			url:"<%=context%>/customer/printaccount.do?customer=" + encodeURIComponent($('#customer').val())+"&city="+$('#city').val(),
 			method:'get',
 			dataType : "html",
 	        success: function(data) {
@@ -313,6 +322,11 @@ function updatePaymentStatus(invoiceNo,isPaid,event){
 				  newWin.document.close();
 	        }
 		});
+	}
+	function deletePayment(paymentId){
+		if(confirm("Payment will be Deleted. Are you sure?")){
+			location=encodeURI('<%=context%>/customer/payment/delete.do?paymentId=' + paymentId);
+		}
 	}
 </script>
 </head>
@@ -357,7 +371,7 @@ function updatePaymentStatus(invoiceNo,isPaid,event){
 								<div id="totalPendingAmount" style="text-align: center; font-size: 14pt; font-weight: bold;"></div>
 								
 							</div>
-							<div class="box" style="width: 45%">
+							<div class="box" style="width: 35%">
 								<div class="title">Invoice Details</div>
 								<div class="table-responsive">
 									<table class="table table-bordered" id="invoiceTable">
@@ -379,19 +393,20 @@ function updatePaymentStatus(invoiceNo,isPaid,event){
 							</div>
 							<!-- 				</div> -->
 							<!-- 				<div class="col-xs-12 col-sm-6"> -->
-							<div class="box" style="width: 54%; margin-left: 10px;">
+							<div class="box" style="width: 64%; margin-left: 10px;">
 								<div class="title">Payment Details</div>
 								<div class="table-responsive">
 									<table class="table table-bordered" id="paymentTable">
 										<thead>
 											<tr>
-												<th>Payment Id</th>
+												<th>Id</th>
 												<!-- 								<th>Customer Name</th> -->
 												<!-- 								<th>City</th> -->
 												<th style="text-align: right;">Amount Paid</th>
 												<th>Paid Date</th>
 												<th>Verified</th>
 												<th>Reference</th>
+												<th><img alt='Delete' src='<%=context%>/images/icn_remove.png' width='24px' /></th>
 											</tr>
 										</thead>
 										<tbody></tbody>

@@ -25,6 +25,7 @@
 		$(".rightpart").css({
 			"width" : wndw_wdth - hide_menu_wdth + "px"
 		});
+
 		$("#btn-toggle").click(function() {
 			if (hide_menu.hasClass('visible')) {
 				$(".rightpart").animate({
@@ -51,7 +52,6 @@
 		var hide_menu = $('#multiple');
 		$(".rightpart").height($(window).height() - $('.headerpart').height());
 		$(".outermenu").height($(window).height() - $('.headerpart').height());
-
 		$(".rightpart").css({
 			"width" : wndw_wdth - hide_menu_wdth + "px"
 		});

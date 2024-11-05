@@ -50,4 +50,12 @@ public class CustomerService {
 	public List<Customer> getCustomerByCity(String city) {
 		return customerDao.getCustomerByCity(city);
 	}
+	
+	public int deletePayment(int paymentId) {
+		return customerDao.deletePayment(paymentId);
+	}
+
+	public Payment getPaymentByPaymentId(int paymentId) {
+		return customerDao.getPaymentByPaymentId(paymentId);
+	}
 }

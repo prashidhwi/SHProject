@@ -27,19 +27,24 @@
 		<jsp:include page="/WEB-INF/jsp/menu.jsp" />
 		<div class="rightpart">
 			<div class="chartouter">
-				<div class="col-xs-12" style="width: 99%">
+				<div class="col-xs-12">
 				<c:if test="${message!=null && message ne ''}">
 								<div id="msg" class="alert alert-success">
 									<a href="#" class="close" data-hide="alert">&times;</a> <strong>${message}</strong>
 								</div>
 							</c:if>
 <!-- 					<div class="box" style="text-align: center;"> -->
-						<img alt="Shrinathji Handicrafta" src="<%=context %>/images/logo.png" height="300px">
+						<img id="dashboardImg" alt="Shrinathji Handicrafta" src="<%=context %>/images/logo.png" height="300px">
 <!-- 					</div> -->
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
+<script type="text/javascript">
+$(document).ready(function(){
+	$(window).trigger("resize");
+});
+</script>
 </body>
 </html>
