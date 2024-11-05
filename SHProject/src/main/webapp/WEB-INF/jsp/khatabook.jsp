@@ -281,7 +281,7 @@ function updatePaymentStatus(invoiceNo,isPaid,event){
 				alert("Please enter Customer.");
 				return;
 			}
-			location=encodeURI('<%=context%>/customer/collectpayment.do?customer=' + $("#customer").val() + '&city='+$("#city").val());
+			location='<%=context%>/customer/collectpayment.do?customer=' + encodeURIComponent($("#customer").val()) + '&city='+$("#city").val();
 		});
 		
 		<%-- $("#payDate").datepicker({

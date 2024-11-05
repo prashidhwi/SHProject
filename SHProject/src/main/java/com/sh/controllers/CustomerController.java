@@ -9,6 +9,10 @@ import com.sh.dao.CustomerDao;
 import com.sh.dao.InvoiceDao;
 import com.sh.service.CustomerService;
 import com.sh.service.InvoiceService;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -140,9 +144,9 @@ public class CustomerController {
 	}
 
 	@RequestMapping(value = "/payment/save", method = RequestMethod.POST)
-	public String savePayment(@ModelAttribute("payment") Payment payment) {
+	public String savePayment(@ModelAttribute("payment") Payment payment) throws UnsupportedEncodingException {
 		this.customerDao.saveCustomerPayment(payment);
-		return "redirect:/customer/khatabook.do?customer=" + payment.getCustomer() + "&city=" + payment.getCity();
+		return "redirect:/customer/khatabook.do?customer=" + URLEncoder.encode(payment.getCustomer(),StandardCharsets.UTF_8.name()) + "&city=" + payment.getCity();
 	}
 
 	@RequestMapping(value = { "/khatabook" }, method = { RequestMethod.GET })
@@ -265,10 +269,10 @@ public class CustomerController {
 	}
 
 	@RequestMapping(value = { "/payment/delete" }, method = { RequestMethod.GET })
-	public String deletePayment(@RequestParam("paymentId") int paymentId, Model model) {
+	public String deletePayment(@RequestParam("paymentId") int paymentId, Model model) throws UnsupportedEncodingException {
 		Payment payment = customerService.getPaymentByPaymentId(paymentId);
 		if (this.customerService.deletePayment(paymentId) > 0) {
-			return "redirect:/customer/khatabook.do?customer=" + payment.getCustomer() + "&city=" + payment.getCity();
+			return "redirect:/customer/khatabook.do?customer=" + URLEncoder.encode(payment.getCustomer(),StandardCharsets.UTF_8.name()) + "&city=" + payment.getCity();
 		}
 		return "redirect:/customer/khatabook.do";
 	}
