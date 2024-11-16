@@ -8,11 +8,8 @@ import java.util.List;
 import javax.servlet.ServletContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
 import com.sh.beans.Invoice;
+import com.sh.beans.InvoiceDataTable;
 import com.sh.service.InvoiceService;
 
 /**
@@ -59,10 +57,28 @@ public class InvoiceController {
 		return new Gson().toJson(message);
 	}
 	
+	@RequestMapping(value = { "/list" }, method = { RequestMethod.POST })
+	@ResponseBody
+	public InvoiceDataTable listInvoices(@RequestParam("draw") int draw, @RequestParam("start") int start,
+			@RequestParam("length") int length, @RequestParam("search[value]") String searchValue,
+			@RequestParam("order[0][column]") int orderColumn, @RequestParam("order[0][dir]") String orderDir) {
+		String[] columnNames = { "invoice_no", "Customer", "city", "grand_total", "paid", "invoice_date", "receipt_id",
+				"notes" };
+		String orderBy = columnNames[orderColumn];
+
+		List<Invoice> data = this.invoiceService.getPaginatedData(start, length, searchValue, orderBy, orderDir);
+
+		int recordsTotal = this.invoiceService.getTotalRecordsCount();
+		int recordsFiltered = searchValue.isEmpty() ? recordsTotal
+				: this.invoiceService.getFilteredRecordsCount(searchValue);
+
+		return new InvoiceDataTable(draw, recordsTotal, recordsFiltered, data);
+	}
+	
 	@RequestMapping(value = "/view", method = RequestMethod.GET)
 	public String viewInvoices(Model model){
-		model.addAttribute("invoiceList", invoiceService.getAllInvoices());
-		return "viewinvoice";
+//		model.addAttribute("invoiceList", invoiceService.getAllInvoices());
+		return "viewinvoice_server";
 	}
 	
 	@RequestMapping(value="/edit", method = RequestMethod.GET)  

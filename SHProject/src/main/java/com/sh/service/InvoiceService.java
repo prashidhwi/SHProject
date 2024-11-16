@@ -20,31 +20,31 @@ import com.sh.dao.ItemDao;
 
 @Service("invoiceService")
 public class InvoiceService {
-	
+
 	@Autowired
 	private InvoiceDao invoiceDao;
-	
+
 	@Autowired
 	private ItemDao itemDao;
-	
+
 	@Transactional
-	public String save(Invoice invoice){
+	public String save(Invoice invoice) {
 		int insertedInvoiceCount = 0;
-		if(invoice.getEditFlag()!=null && invoice.getEditFlag().equalsIgnoreCase("true")){
+		if (invoice.getEditFlag() != null && invoice.getEditFlag().equalsIgnoreCase("true")) {
 			insertedInvoiceCount = invoiceDao.updateInvoiceHeader(invoice);
 		} else {
 			insertedInvoiceCount = invoiceDao.insertInvoiceHeader(invoice);
 		}
 		String message = "";
-		if(insertedInvoiceCount>0 && invoice.getInvoiceDetails()!= null && invoice.getInvoiceDetails().size()>0){
+		if (insertedInvoiceCount > 0 && invoice.getInvoiceDetails() != null && invoice.getInvoiceDetails().size() > 0) {
 			int invoiceDetailsCount = invoice.getInvoiceDetails().size();
 			List<InvoiceDetails> oldInvoiceDetails = null;
-			if(invoice.getEditFlag()!=null && invoice.getEditFlag().equalsIgnoreCase("true")){
+			if (invoice.getEditFlag() != null && invoice.getEditFlag().equalsIgnoreCase("true")) {
 				oldInvoiceDetails = invoiceDao.getInvoiceDetailsByInvoiceNo(invoice.getInvoiceNo());
 				invoiceDao.deleteInvoiceDetails(invoice.getInvoiceNo());
 			}
 			int[] insertedInvoiceDetailsCounts = invoiceDao.insertInvoiceDetails(invoice.getInvoiceDetails());
-			if(insertedInvoiceDetailsCounts.length==invoiceDetailsCount){
+			if (insertedInvoiceDetailsCounts.length == invoiceDetailsCount) {
 				if (oldInvoiceDetails != null) {
 					List<Map<String, Object>> oldItemList = new ArrayList<Map<String, Object>>();
 					for (InvoiceDetails invoiceDetails : oldInvoiceDetails) {
@@ -55,15 +55,15 @@ public class InvoiceService {
 					}
 					itemDao.addQuantity(oldItemList);
 				}
-				List<Map<String, Object>> itemList = new ArrayList<Map<String,Object>>();
-				for(InvoiceDetails invoiceDetails:invoice.getInvoiceDetails()){
+				List<Map<String, Object>> itemList = new ArrayList<Map<String, Object>>();
+				for (InvoiceDetails invoiceDetails : invoice.getInvoiceDetails()) {
 					Map<String, Object> itemMap = new HashMap<String, Object>();
 					itemMap.put("itemName", invoiceDetails.getItemName());
 					itemMap.put("qty", invoiceDetails.getQty());
 					itemList.add(itemMap);
 				}
 				int[] qtyUpdate = itemDao.subtractQuantity(itemList);
-				if(qtyUpdate.length==itemList.size()){
+				if (qtyUpdate.length == itemList.size()) {
 					message = "Invoice Saved Successfully";
 				} else {
 					message = "Error updating Stock of Items.";
@@ -74,47 +74,47 @@ public class InvoiceService {
 		} else {
 			message = "Error saving Invoice.";
 		}
-		
+
 		return message;
 	}
-	
+
 	public List<Invoice> getAllInvoices() {
 		return invoiceDao.getAllInvoices();
 	}
-	
+
 	public Invoice getInvoice(int invoiceNo) {
 		Invoice invoice = invoiceDao.getInvoiceByInvoiceNo(invoiceNo);
-		if(invoice != null){
+		if (invoice != null) {
 			DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 			invoice.setInvDate(dateFormat.format(new Date(invoice.getInvoiceDate().getTime())));
 			invoice.setInvoiceDetails(invoiceDao.getInvoiceDetailsByInvoiceNo(invoiceNo));
 		}
-		
+
 		return invoice;
 	}
-	
-	public String updateInvoicePaymentStatus(int invoiceNo,boolean isPaid){
+
+	public String updateInvoicePaymentStatus(int invoiceNo, boolean isPaid) {
 		int updatePayment = invoiceDao.updateInvoicePaymentStatus(invoiceNo, isPaid);
-		if(updatePayment>0){
-			return "Invoice is marked as " + (isPaid?"Paid":"UnPaid");
+		if (updatePayment > 0) {
+			return "Invoice is marked as " + (isPaid ? "Paid" : "UnPaid");
 		} else {
 			return "Failed to update Invoice Payment Status";
 		}
 	}
-	
+
 	public Integer getMaxInvoiceNumber() {
 		return invoiceDao.getMaxInvoiceNumber();
 	}
-	
+
 	public List<Invoice> getUnPaidInvoicesByCustomer(Invoice invoice) {
 		return invoiceDao.getUnPaidInvoicesByCustomer(invoice.getCustomer(), invoice.getCity());
 	}
-	
-	public List<Invoice> getAllInvoicesByCustomer(String customerName, String city){
+
+	public List<Invoice> getAllInvoicesByCustomer(String customerName, String city) {
 		return invoiceDao.getInvoicesByCustomer(customerName, city);
 	}
-	
-	public List<Invoice> getAllInvoicesByCity(String city){
+
+	public List<Invoice> getAllInvoicesByCity(String city) {
 		return invoiceDao.getInvoicesByCity(city);
 	}
 
@@ -135,8 +135,21 @@ public class InvoiceService {
 		}
 		invoiceDao.deleteInvoice(invoiceNo);
 	}
-	
-	public Invoice getNetInvoice(List<Integer> invoiceNoList){
+
+	public Invoice getNetInvoice(List<Integer> invoiceNoList) {
 		return invoiceDao.getNetInvoice(invoiceNoList);
 	}
+
+	public List<Invoice> getPaginatedData(int start, int length, String searchValue, String orderBy, String orderDir) {
+		return invoiceDao.getPaginatedData(start, length, searchValue, orderBy, orderDir);
+	}
+
+	public int getTotalRecordsCount() {
+		return invoiceDao.getTotalRecordsCount();
+	}
+
+	public int getFilteredRecordsCount(String searchValue) {
+		return invoiceDao.getFilteredRecordsCount(searchValue);
+	}
+
 }

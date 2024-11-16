@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import com.sh.beans.Invoice;
@@ -101,8 +102,7 @@ public class InvoiceDao extends BaseJdbcDaoSupport {
 	public Invoice getNetInvoice(List<Integer> invoiceNoList) {
 		try {
 			String inParams = String.join(",", invoiceNoList.stream().map(id -> id + "").collect(Collectors.toList()));
-			String sql = "select invoice_date as invoiceDate from invoice "
-					+ "where invoice_no in ( select invoice_no "
+			String sql = "select invoice_date as invoiceDate from invoice " + "where invoice_no in ( select invoice_no "
 					+ "from invoice_details where invoice_no in (?) and upper(item_no)=upper('Net') ) "
 					+ "and paid=0 and status>0 order by invoice_date desc  limit 1";
 			return getJdbcTemplate().queryForObject(sql, new Object[] { inParams },
@@ -110,6 +110,29 @@ public class InvoiceDao extends BaseJdbcDaoSupport {
 		} catch (EmptyResultDataAccessException e) {
 			return null;
 		}
+	}
+
+	public List<Invoice> getPaginatedData(int start, int length, String searchValue, String orderBy, String orderDir) {
+		String sql = "select * from (SELECT invoice_no as invoiceNo,customer,city,invoice_date as invoiceDate,grand_total as grandTotal,paid as paid,receipt_id as receiptId,notes as note "
+				+ " FROM invoice e WHERE status>0 and (e.customer LIKE ? or invoice_no = ? or city like ?) ORDER BY "
+				+ orderBy + " " + orderDir + " ) as inv " +
+				" LIMIT ? OFFSET ?";
+
+		return getJdbcTemplate().query(sql,
+				new Object[] { "%" + searchValue + "%", searchValue, String.valueOf(searchValue) + "%",
+						Integer.valueOf(length), Integer.valueOf(start) },
+				(RowMapper) new BeanPropertyRowMapper(Invoice.class));
+	}
+
+	public int getTotalRecordsCount() {
+		return ((Integer) getJdbcTemplate().queryForObject("SELECT COUNT(*) FROM invoice where status>0",
+				Integer.class)).intValue();
+	}
+
+	public int getFilteredRecordsCount(String searchValue) {
+		return ((Integer) getJdbcTemplate().queryForObject(
+				"SELECT COUNT(*) FROM invoice where status>0 and customer LIKE ?", Integer.class,
+				new Object[] { "%" + searchValue + "%" })).intValue();
 	}
 
 }
